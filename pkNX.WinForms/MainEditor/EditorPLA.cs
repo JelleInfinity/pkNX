@@ -120,30 +120,33 @@ internal class EditorPLA : EditorBase
         return form.Modified;
     }
 
-    public void EditThrowable_Param()
-    {
-        var itemNames = ROM.GetStrings(TextName.ItemNames);
-        PopFlat<ThrowableParamTable8a, ThrowableParam8a>(GameFile.ThrowableParam, "Throwable Param Editor", z => itemNames[z.ItemID]);
-    }
 
     public void EditThrow_Param()
     {
         PopFlat<ThrowParamTable8a, ThrowParam8a>(GameFile.ThrowParam, "Throw Param Editor", z => z.Hash.ToString("X16"));
     }
 
-    public void EditThrow_ResourceSet_Dictionary()
+    public void EditThrow_PermissionSet_Param()
     {
-        PopFlat<ThrowableResourceSetDictionary8a, ThrowableResourceSetEntry8a>(GameFile.ThrowableResourceSet, "Throwable ResourceSet Dictionary Editor", z => z.Hash_00.ToString("X16"));
+        PopFlat<ThrowPermissionSetDictionary8a, ThrowPermissionSetEntry8a>(GameFile.ThrowPermissionSet, "Throw Permission Editor", z => z.Hash_00.ToString("X16"));
     }
 
+    public void EditThrowableBaitParam_Dictionary()
+    {
+        PopFlat<ThrowableBaitParamDictionary8a, ThrowableBaitParamEntry8a>(GameFile.ThrowableBaitParam, "Throwable Bait Param Dictionary Editor", z => z.Hash_00.ToString("X16"));
+    }
+    public void EditThrowable_Param()
+    {
+        var itemNames = ROM.GetStrings(TextName.ItemNames);
+        PopFlat<ThrowableParamTable8a, ThrowableParam8a>(GameFile.ThrowableParam, "Throwable Param Editor", z => itemNames[z.ItemID]);
+    }
     public void EditThrow_Resource_Dictionary()
     {
         PopFlat<ThrowableResourceDictionary8a, ThrowableResourceEntry8a>(GameFile.ThrowableResource, "Throwable Resource Dictionary Editor", z => z.Hash_00.ToString("X16"));
     }
-
-    public void EditThrow_PermissionSet_Param()
+    public void EditThrow_ResourceSet_Dictionary()
     {
-        PopFlat<ThrowPermissionSetDictionary8a, ThrowPermissionSetEntry8a>(GameFile.ThrowPermissionSet, "Throw Permission Editor", z => z.Hash_00.ToString("X16"));
+        PopFlat<ThrowableResourceSetDictionary8a, ThrowableResourceSetEntry8a>(GameFile.ThrowableResourceSet, "Throwable ResourceSet Dictionary Editor", z => z.Hash_00.ToString("X16"));
     }
 
     public void EditHa_Shop_Data()
@@ -411,12 +414,131 @@ internal class EditorPLA : EditorBase
         obj[0] = FlatBufferConverter.SerializeFrom(root);
     }
 
+
+    public void EditAICommonConfig() => PopFlatConfig(GameFile.AICommonConfig, "AICommonConfig Editor");
+    public void EditAIExcitingConfig() => PopFlatConfig(GameFile.AIExcitingConfig, "AIExcitingConfig Editor");
+    public void Editai_field_waza_config() => PopFlatConfig(GameFile.ai_field_waza_config, "ai_field_waza_config Editor");
+    public void Editai_semi_legend_config() => PopFlatConfig(GameFile.ai_semi_legend_config, "ai_semi_legend_config Editor");
+    public void Editai_tiredness_config() => PopFlatConfig(GameFile.ai_tiredness_config, "ai_tiredness_config Editor");
+    public void EditAppConfigList() => PopFlatConfig(GameFile.AppConfigList, "AppConfigList Editor");
+    public void Editappli_hud_config() => PopFlatConfig(GameFile.appli_hud_config, "appli_hud_config Editor");
+    public void Editappli_staffroll_config() => PopFlatConfig(GameFile.appli_staffroll_config, "appli_staffroll_config Editor");
+    public void Editappli_tips_config() => PopFlatConfig(GameFile.appli_tips_config, "appli_tips_config Editor");
+    public void Editbattle_common_config() => PopFlatConfig(GameFile.battle_common_config, "battle_common_config Editor");
+    public void Editbattle_end_config() => PopFlatConfig(GameFile.battle_end_config, "battle_end_config Editor");
+    public void Editbattle_in_config() => PopFlatConfig(GameFile.battle_in_config, "battle_in_config Editor");
+    public void EditBattleLogicConfig() => PopFlatConfig(GameFile.BattleLogicConfig, "BattleLogicConfig Editor");
+    public void Editbattle_start_config() => PopFlatConfig(GameFile.battle_start_config, "battle_start_config Editor");
+    public void EditBattleViewConfig() => PopFlatConfig(GameFile.BattleViewConfig, "BattleViewConfig Editor");
+    public void Editbattle_vsns_config() => PopFlatConfig(GameFile.battle_vsns_config, "battle_vsns_config Editor");
+    public void Editbuddy_battle_config() => PopFlatConfig(GameFile.buddy_battle_config, "buddy_battle_config Editor");
+    public void Editbuddy_config() => PopFlatConfig(GameFile.buddy_config, "buddy_config Editor");
+    public void Editbuddy_direct_item_config() => PopFlatConfig(GameFile.buddy_direct_item_config, "buddy_direct_item_config Editor");
+    public void Editbuddy_group_talk_config() => PopFlatConfig(GameFile.buddy_group_talk_config, "buddy_group_talk_config Editor");
+    public void Editbuddy_landmark_config() => PopFlatConfig(GameFile.buddy_landmark_config, "buddy_landmark_config Editor");
+    public void Editbuddy_npc_reaction_config() => PopFlatConfig(GameFile.buddy_npc_reaction_config, "buddy_npc_reaction_config Editor");
+    public void Editbuddy_player_mode_config() => PopFlatConfig(GameFile.buddy_player_mode_config, "buddy_player_mode_config Editor");
+    public void Editbuddy_warp_config() => PopFlatConfig(GameFile.buddy_warp_config, "buddy_warp_config Editor");
+    public void Editcharacter_biped_ik_config() => PopFlatConfig(GameFile.character_biped_ik_config, "character_biped_ik_config Editor");
+    public void Editcharacter_blink_config() => PopFlatConfig(GameFile.character_blink_config, "character_blink_config Editor");
+    public void Editcharacter_controller_config() => PopFlatConfig(GameFile.character_controller_config, "character_controller_config Editor");
+    public void Editcharacter_look_at_config() => PopFlatConfig(GameFile.character_look_at_config, "character_look_at_config Editor");
+    public void EditCaptureConfig() => PopFlatConfig(GameFile.CaptureConfig, "CaptureConfig Editor");
+    public void Editcommon_general_config() => PopFlatConfig(GameFile.common_general_config, "common_general_config Editor");
+    public void Editcommon_item_config() => PopFlatConfig(GameFile.common_item_config, "common_item_config Editor");
+    public void Editdemo_config() => PopFlatConfig(GameFile.demo_config, "demo_config Editor");
+    public void Editenv_poke_voice_config() => PopFlatConfig(GameFile.env_poke_voice_config, "env_poke_voice_config Editor");
+    public void Editevent_balloonrun_config() => PopFlatConfig(GameFile.event_balloonrun_config, "event_balloonrun_config Editor");
+    public void Editevent_balloonthrow_config() => PopFlatConfig(GameFile.event_balloonthrow_config, "event_balloonthrow_config Editor");
+    public void Editevent_bandit_config() => PopFlatConfig(GameFile.event_bandit_config, "event_bandit_config Editor");
+    public void Editevent_culling_config() => PopFlatConfig(GameFile.event_culling_config, "event_culling_config Editor");
+    public void Editevent_dither_config() => PopFlatConfig(GameFile.event_dither_config, "event_dither_config Editor");
+    public void EditEventFarmConfig() => PopFlatConfig(GameFile.EventFarmConfig, "EventFarmConfig Editor");
+    public void Editevent_game_over_config() => PopFlatConfig(GameFile.event_game_over_config, "event_game_over_config Editor");
+    public void Editevent_item_config() => PopFlatConfig(GameFile.event_item_config, "event_item_config Editor");
+    public void Editevent_mkrg_reward_config() => PopFlatConfig(GameFile.event_mkrg_reward_config, "event_mkrg_reward_config Editor");
+    public void Editevent_quest_board_config() => PopFlatConfig(GameFile.event_quest_board_config, "event_quest_board_config Editor");
+    public void Editevent_restriction_battle() => PopFlatConfig(GameFile.event_restriction_battle, "event_restriction_battle Editor");
+    public void Editevent_work() => PopFlatConfig(GameFile.event_work, "event_work Editor");
+
+    public void Edit_npc_ai_config() => PopFlatConfig(GameFile.npc_ai_config, "npc_ai_config");
+    public void Edit_npc_controller_config() => PopFlatConfig(GameFile.npc_controller_config, "npc_controller_config");
+    public void Edit_npc_creater_config() => PopFlatConfig(GameFile.npc_creater_config, "npc_creater_config");
+    public void Edit_npc_pokemon_ai_config() => PopFlatConfig(GameFile.npc_pokemon_ai_config, "npc_pokemon_ai_config");
+    public void Edit_npc_popup_config() => PopFlatConfig(GameFile.npc_popup_config, "npc_popup_config");
+    public void Edit_npc_talk_table_config() => PopFlatConfig(GameFile.npc_talk_table_config, "npc_talk_table_config");
+    public void Edit_player_camera_shake_config() => PopFlatConfig(GameFile.player_camera_shake_config, "player_camera_shake_config");
+    public void Edit_player_collision_config() => PopFlatConfig(GameFile.player_collision_config, "player_collision_config");
+    public void Edit_PlayerConfig() => PopFlatConfig(GameFile.PlayerConfig, "PlayerConfig");
+    public void Edit_player_controller_config() => PopFlatConfig(GameFile.player_controller_config, "player_controller_config");
+    public void Edit_player_face_config() => PopFlatConfig(GameFile.player_face_config, "player_face_config");
+    public void Edit_pokemon_config() => PopFlatConfig(GameFile.pokemon_config, "pokemon_config");
+    public void Edit_pokemon_controller_config() => PopFlatConfig(GameFile.pokemon_controller_config, "pokemon_controller_config");
+    public void Edit_EvolutionConfig() => PopFlatConfig(GameFile.EvolutionConfig, "EvolutionConfig");
+    public void Edit_pokemon_friendship_config() => PopFlatConfig(GameFile.pokemon_friendship_config, "pokemon_friendship_config");
+    public void Edit_ShinyRolls() => PopFlatConfig(GameFile.ShinyRolls, "ShinyRolls");
+    public void Edit_SizeScaleConfig() => PopFlatConfig(GameFile.SizeScaleConfig, "SizeScaleConfig");
+    public void Edit_ride_basurao_collision_config() => PopFlatConfig(GameFile.ride_basurao_collision_config, "ride_basurao_collision_config");
+    public void Edit_ride_basurao_config() => PopFlatConfig(GameFile.ride_basurao_config, "ride_basurao_config");
+    public void Edit_ride_change_config() => PopFlatConfig(GameFile.ride_change_config, "ride_change_config");
+    public void Edit_ride_common_config() => PopFlatConfig(GameFile.ride_common_config, "ride_common_config");
+    public void Edit_ride_nyuura_collision_config() => PopFlatConfig(GameFile.ride_nyuura_collision_config, "ride_nyuura_collision_config");
+    public void Edit_ride_nyuura_config() => PopFlatConfig(GameFile.ride_nyuura_config, "ride_nyuura_config");
+    public void Edit_ride_nyuura_controller_config() => PopFlatConfig(GameFile.ride_nyuura_controller_config, "ride_nyuura_controller_config");
+    public void Edit_ride_odoshishi_collision_config() => PopFlatConfig(GameFile.ride_odoshishi_collision_config, "ride_odoshishi_collision_config");
+    public void Edit_ride_odoshishi_config() => PopFlatConfig(GameFile.ride_odoshishi_config, "ride_odoshishi_config");
+    public void Edit_ride_ringuma_collision_config() => PopFlatConfig(GameFile.ride_ringuma_collision_config, "ride_ringuma_collision_config");
+    public void Edit_ride_ringuma_config() => PopFlatConfig(GameFile.ride_ringuma_config, "ride_ringuma_config");
+    public void Edit_ride_ringuma_controller_config() => PopFlatConfig(GameFile.ride_ringuma_controller_config, "ride_ringuma_controller_config");
+    public void Edit_ride_whooguru_collision_config() => PopFlatConfig(GameFile.ride_whooguru_collision_config, "ride_whooguru_collision_config");
+    public void Edit_ride_whooguru_config() => PopFlatConfig(GameFile.ride_whooguru_config, "ride_whooguru_config");
+    public void Edit_ride_whooguru_controller_config() => PopFlatConfig(GameFile.ride_whooguru_controller_config, "ride_whooguru_controller_config");
+    public void Edit_sound_config() => PopFlatConfig(GameFile.sound_config, "sound_config");
+    public void Edit_water_motion() => PopFlatConfig(GameFile.water_motion, "water_motion");
+
+
+
+
+
+
+
+
+
+
     public void EditShinyRate() => PopFlatConfig(GameFile.ShinyRolls, "Shiny Rate Editor");
     public void EditWormholeRate() => PopFlatConfig(GameFile.WormholeConfig, "Wormhole Config Editor");
     public void EditCapture_Config() => PopFlatConfig(GameFile.CaptureConfig, "CaptureConfig Editor");
     public void EditBattle_Logic_Config() => PopFlatConfig(GameFile.BattleLogicConfig, "Battle Logic Config Editor");
     public void EditEvent_Farm_Config() => PopFlatConfig(GameFile.EventFarmConfig, "Event Farm Config Editor");
     public void EditPlayer_Config() => PopFlatConfig(GameFile.PlayerConfig, "Player Config Editor");
+
+
+
+    public void EditField_anime_framerate_config() => PopFlatConfig(GameFile.field_anime_framerate_config, "field_anime_framerate_config");
+    public void EditField_area_speed_config() => PopFlatConfig(GameFile.field_area_speed_config, "field_area_speed_config");
+    public void EditField_camera_config() => PopFlatConfig(GameFile.field_camera_config, "field_camera_config");
+    public void EditField_capture_director_config() => PopFlatConfig(GameFile.field_capture_director_config, "field_capture_director_config");
+    public void EditField_chara_viewer_config() => PopFlatConfig(GameFile.field_chara_viewer_config, "field_chara_viewer_config");
+    public void EditField_common_config() => PopFlatConfig(GameFile.field_common_config, "field_common_config");
+    public void EditField_direct_item_config() => PopFlatConfig(GameFile.field_direct_item_config, "field_direct_item_config");
+    public void EditField_env_config() => PopFlatConfig(GameFile.field_env_config, "field_env_config");
+    public void EditField_item() => PopFlatConfig(GameFile.field_item, "field_item");
+    public void EditField_item_respawn() => PopFlatConfig(GameFile.field_item_respawn, "field_item_respawn");
+    public void EditField_landmark_incite_config() => PopFlatConfig(GameFile.field_landmark_incite_config, "field_landmark_incite_config");
+    public void EditField_lockon_config() => PopFlatConfig(GameFile.field_lockon_config, "field_lockon_config");
+    public void EditField_my_poke_ball_hit_none_target_config() => PopFlatConfig(GameFile.field_my_poke_ball_hit_none_target_config, "field_my_poke_ball_hit_none_target_config");
+    public void EditField_obstruction_waza_config() => PopFlatConfig(GameFile.field_obstruction_waza_config, "field_obstruction_waza_config");
+    public void EditField_pokemon_slope_config() => PopFlatConfig(GameFile.field_pokemon_slope_config, "field_pokemon_slope_config");
+    public void EditField_quest_destination_config() => PopFlatConfig(GameFile.field_quest_destination_config, "field_quest_destination_config");
+    public void EditField_shadow_config() => PopFlatConfig(GameFile.field_shadow_config, "field_shadow_config");
+    public void EditField_throw_config() => PopFlatConfig(GameFile.field_throw_config, "field_throw_config");
+    public void EditField_throwable_after_hit_config() => PopFlatConfig(GameFile.field_throwable_after_hit_config, "field_throwable_after_hit_config");
+    public void EditField_vigilance_bgm_config() => PopFlatConfig(GameFile.field_vigilance_bgm_config, "field_vigilance_bgm_config");
+    public void EditField_weathering_config() => PopFlatConfig(GameFile.field_weathering_config, "field_weathering_config");
+    public void EditField_wild_pokemon_config() => PopFlatConfig(GameFile.field_wild_pokemon_config, "field_wild_pokemon_config");
+
+    public void EditTestConfig() => PopFlatConfig(GameFile.TestConfig, "Test Config");
+
     public void EditField_Landmark_Config() => PopFlatConfig(GameFile.FieldLandmarkConfig, "Field Landmark Config Editor");
     public void EditBattle_View_Config() => PopFlatConfig(GameFile.BattleViewConfig, "Battle View Config Editor");
     public void EditAICommon_Config() => PopFlatConfig(GameFile.AICommonConfig, "AI Common Config Editor");
