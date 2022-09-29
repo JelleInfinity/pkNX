@@ -48,6 +48,17 @@ internal class EditorPLA : EditorBase
         if (!form.Modified)
             text.CancelEdits();
     }
+    public void EditNPCModelSet()
+    {
+        var gfp = (GFPack)ROM.GetFile(GameFile.Resident);
+        var index = gfp.GetIndexFull("bin/field/param/placement/common/npc_model_set.bin");
+
+        var obj = FlatBufferConverter.DeserializeFrom<NPCModelSet8a>(gfp[index]);
+        var result = PopFlat(obj.Table, "NPC Model Set Editor", z => z.NPCHash.ToString("X16"));
+        if (!result)
+            return;
+        gfp[index] = FlatBufferConverter.SerializeFrom(obj);
+    }
 
     public void EditTrainers()
     {
