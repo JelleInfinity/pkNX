@@ -89,7 +89,7 @@ namespace pkNX.WinForms
             PG_Move.SelectedObject = EditUtil.Settings.Move;
         }
 
-        public void InitPersonal()
+        private void InitPersonal()
         {
             /*for (int i = 0; i < TMs.Count / 2; i++)
                 CLB_TM.Items.Add($"TM{i:00} {movelist[TMs[i]]}");
@@ -119,7 +119,7 @@ namespace pkNX.WinForms
             CB_EXPGroup.Items.AddRange(Enum.GetNames(typeof(EXPGroup)));
         }
 
-        public void InitLearn()
+        private void InitLearn()
         {
             string[] sortedmoves = (string[])movelist.Clone();
 
@@ -153,7 +153,7 @@ namespace pkNX.WinForms
             dgv.Columns.Add(dgvMove);
         }
 
-        public void InitEvo()
+        private void InitEvo()
         {
             EvolutionRow8a.species = species;
             EvolutionRow8a.items = items;
@@ -161,7 +161,7 @@ namespace pkNX.WinForms
             EvolutionRow8a.types = types;
         }
 
-        public void UpdateIndex(object sender, EventArgs e)
+        private void UpdateIndex(object sender, EventArgs e)
         {
             if (Loaded)
                 SaveCurrent();
@@ -200,17 +200,17 @@ namespace pkNX.WinForms
             return result;
         }
 
-        private void SaveCurrent()
+        public void SaveCurrent()
         {
             SavePersonal();
             SaveLearnset();
             SaveEvolutions();
         }
 
-        public void LoadPersonal(IPersonalInfoPLA pkm)
+        private void LoadPersonal(IPersonalInfoPLA pkm)
         {
             cPersonal = pkm;
-            UpdateButtonStates();
+            UpdateSpeciesButtonStates();
 
             TB_BaseHP.Text = pkm.HP.ToString(TB_BaseHP.Mask);
             TB_BaseATK.Text = pkm.ATK.ToString(TB_BaseATK.Mask);
@@ -226,7 +226,7 @@ namespace pkNX.WinForms
             TB_SPDEVs.Text = pkm.EV_SPD.ToString(TB_SPDEVs.Mask);
             TB_BST.Text = pkm.GetBaseStatTotal().ToString(TB_BST.Mask);
 
-            TB_Classification.Text = classifications[pkm.ModelID];
+            TB_Classification.Text = classifications[pkm.DexIndexNational];
 
             CB_Type1.SelectedIndex = (int)pkm.Type1;
             CB_Type2.SelectedIndex = (int)pkm.Type2;
@@ -310,7 +310,7 @@ namespace pkNX.WinForms
             PG_DexResearchTasks.SelectedObject = pokedexResearchTask;
         }
 
-        public void UpdateGenderDetailLabel()
+        private void UpdateGenderDetailLabel()
         {
             switch (cPersonal.GetFixedGenderType())
             {
@@ -330,15 +330,15 @@ namespace pkNX.WinForms
             }
         }
 
-        public void UpdateButtonStates()
+        private void UpdateSpeciesButtonStates()
         {
-            B_PreviousPokemon.Enabled = cPersonal.ModelID > 0;
+            B_PreviousPokemon.Enabled = cPersonal.DexIndexNational > 0;
             B_PreviousForm.Enabled = cPersonal.Form > 0;
             B_NextForm.Enabled = (cPersonal.Form + 1) < cPersonal.FormCount;
-            B_NextPokemon.Enabled = (cPersonal.ModelID + 1) < Data.PersonalData.MaxSpeciesID;
+            B_NextPokemon.Enabled = (cPersonal.DexIndexNational + 1) < Data.PersonalData.MaxSpeciesID;
         }
 
-        public void SavePersonal()
+        private void SavePersonal()
         {
             var pkm = cPersonal;
             pkm.HP = Util.ToInt32(TB_BaseHP.Text);
@@ -419,7 +419,7 @@ namespace pkNX.WinForms
                 pkm.SpecialTutors[0][i] = CLB_SpecialTutor.GetItemChecked(i);
         }
 
-        public void LoadLearnset(Learnset8aMeta pkm)
+        private void LoadLearnset(Learnset8aMeta pkm)
         {
             cLearnset = pkm;
             dgv.Rows.Clear();
@@ -441,7 +441,7 @@ namespace pkNX.WinForms
             dgv.CancelEdit();
         }
 
-        public void SaveLearnset()
+        private void SaveLearnset()
         {
             // TODO
             var pkm = cLearnset;
@@ -462,7 +462,7 @@ namespace pkNX.WinForms
             //pkm.Update(moves.ToArray(), levels.ToArray());
         }
 
-        public void LoadEvolutions(EvolutionSet8a s)
+        private void LoadEvolutions(EvolutionSet8a s)
         {
             cEvos = s;
 
@@ -485,7 +485,7 @@ namespace pkNX.WinForms
             }
         }
 
-        public void SaveEvolutions()
+        private void SaveEvolutions()
         {
             var s = cEvos;
             Debug.Assert(s.Table != null && EvoRows.Length == s.Table.Length);
@@ -493,7 +493,7 @@ namespace pkNX.WinForms
                 row.SaveEvolution();
         }
 
-        public void AutoFillPersonal()
+        private void AutoFillPersonal()
         {
             Debug.Assert(Data.PersonalData is PersonalTable8LA, "This function is build for PLA data. It needs to be updated if more data is added.");
 
@@ -501,11 +501,9 @@ namespace pkNX.WinForms
             la.FixMissingData();
         }
 
-        public void AutoFillEvolutions()
+        private void AutoFillEvolutions()
         {
             var usum = ResourcesUtil.USUM_Evolutions;
-            var usumPersonal = ResourcesUtil.SWSH;
-
             var swsh = ResourcesUtil.SWSH_Evolutions;
             var swshPersonal = ResourcesUtil.SWSH;
 
@@ -726,8 +724,8 @@ namespace pkNX.WinForms
 
         private void B_NextPokemon_Click(object sender, EventArgs e)
         {
-            Debug.Assert(cPersonal.ModelID < Data.PersonalData.MaxSpeciesID);
-            CB_Species.SelectedIndex = cPersonal.ModelID + 1;
+            Debug.Assert(cPersonal.DexIndexNational < Data.PersonalData.MaxSpeciesID);
+            CB_Species.SelectedIndex = cPersonal.DexIndexNational + 1;
         }
 
         private void B_NextForm_Click(object sender, EventArgs e)
@@ -735,7 +733,7 @@ namespace pkNX.WinForms
             Debug.Assert(cPersonal.Form < cPersonal.FormCount);
 
             var pt = Data.PersonalData;
-            CB_Species.SelectedIndex = pt.GetFormIndex(cPersonal.ModelID, (byte)(cPersonal.Form + 1));
+            CB_Species.SelectedIndex = pt.GetFormIndex(cPersonal.DexIndexNational, (byte)(cPersonal.Form + 1));
         }
 
         private void B_PreviousForm_Click(object sender, EventArgs e)
@@ -743,13 +741,47 @@ namespace pkNX.WinForms
             Debug.Assert(cPersonal.Form > 0);
 
             var pt = Data.PersonalData;
-            CB_Species.SelectedIndex = pt.GetFormIndex(cPersonal.ModelID, (byte)(cPersonal.Form - 1));
+            CB_Species.SelectedIndex = pt.GetFormIndex(cPersonal.DexIndexNational, (byte)(cPersonal.Form - 1));
         }
 
         private void B_PreviousPokemon_Click(object sender, EventArgs e)
         {
-            Debug.Assert(cPersonal.ModelID > 0);
-            CB_Species.SelectedIndex = cPersonal.ModelID - 1;
+            Debug.Assert(cPersonal.DexIndexNational > 0);
+            CB_Species.SelectedIndex = cPersonal.DexIndexNational - 1;
+        }
+
+        private void B_AddTask_Click(object sender, EventArgs e)
+        {
+            int species = cPersonal.DexIndexNational;
+            Data.DexResearch.Root.AddTask(species);
+
+            LoadDexResearch(Editor.DexResearch.Root.GetEntries(species));
+        }
+
+        private void B_CloneTask_Click(object sender, EventArgs e)
+        {
+            Debug.Assert(PG_DexResearchTasks.SelectedGridItem.Value is PokedexResearchTask);
+            var task = (PokedexResearchTask)PG_DexResearchTasks.SelectedGridItem.Value;
+            Data.DexResearch.Root.AddTask(task);
+
+            LoadDexResearch(Editor.DexResearch.Root.GetEntries(task.Species));
+        }
+
+        private void B_DeleteTask_Click(object sender, EventArgs e)
+        {
+            Debug.Assert(PG_DexResearchTasks.SelectedGridItem.Value is PokedexResearchTask);
+            var task = (PokedexResearchTask)PG_DexResearchTasks.SelectedGridItem.Value;
+            Data.DexResearch.Root.RemoveTask(task);
+
+            LoadDexResearch(Editor.DexResearch.Root.GetEntries(task.Species));
+        }
+
+        private void PG_DexResearchTasks_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)
+        {
+            object obj = e.NewSelection.Value;
+            bool enable = obj is PokedexResearchTask;
+            B_CloneTask.Enabled = enable;
+            B_DeleteTask.Enabled = enable;
         }
 
         private void B_Save_Click(object sender, EventArgs e)
