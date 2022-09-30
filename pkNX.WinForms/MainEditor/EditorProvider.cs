@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using pkNX.Game;
 using pkNX.Structures;
 
@@ -64,39 +65,27 @@ namespace pkNX.WinForms.Controls
             foreach (var m in methods)
             {
                 const string prefix = "Edit";
-                if (!m.Name.StartsWith(prefix))
+                var callable = m.GetCustomAttribute<EditorCallableAttribute>();
+
+                // The method name needs to start with `Edit` or an EditorCallable attribute should be added
+                if (!m.Name.StartsWith(prefix) && callable == null)
                     continue;
 
-                static string GetEditorName(string name)
-                {
-                    var builder = new StringBuilder();
-                    var nameNoUnderscore = name.Replace("_", "");
+                // If an attribute was added, we need to only add buttons for the requested category
+                if (callable != null && callable.Category != category)
+                    continue;
 
-                    for (int i = 0; i < nameNoUnderscore.Length; ++i)
-                    {
-                        char c = nameNoUnderscore[i];
+                // No attribute was added, ignore requests for any category buttons
+                if (callable == null && category != EditorCategory.None)
+                    continue;
 
-                        if (builder.Length > 0 && char.IsUpper(c) && i + 1 < nameNoUnderscore.Length)
-                        {
-                            // Don't add a space if the next character is also a capital letter. eg. AI Editor
-                            if (!char.IsUpper(nameNoUnderscore[i + 1]))
-                            {
-                                builder.Append(' ');
-                            }
-                        }
-
-                        builder.Append(c);
-                    }
-                    return builder.ToString();
-                }
-
-                var name = m.Name[prefix.Length..];
+                var name = m.Name.Replace(prefix, "");
                 var b = new Button
                 {
                     Width = width,
                     Height = height,
                     Name = $"B_{name}",
-                    Text = GetEditorName(name),
+                    Text = (callable?.HasCustomEditorName() ?? false) ? callable.EditorName : GetEditorName(name),
                 };
                 b.Click += (s, e) =>
                 {
