@@ -59,4 +59,17 @@ public partial class PlacementSpawnerEditor8a : UserControl
         WinFormsUtil.Alert($"Set all to have {count} entities spawned.");
         CB_Encounters_SelectedIndexChanged(sender, e);
     }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        foreach (var spawner in Spawners)
+        {
+            if (spawner.MinSpawnCount == 1)
+                spawner.MaxSpawnCount = 2;
+            else
+                spawner.MaxSpawnCount = 6;
+        }
+
+        CB_Encounters_SelectedIndexChanged(sender, e);
+    }
 }

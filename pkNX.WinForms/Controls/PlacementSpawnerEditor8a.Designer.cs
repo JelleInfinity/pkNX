@@ -34,6 +34,7 @@
             this.CB_Encounters = new System.Windows.Forms.ComboBox();
             this.L_ConfigName = new System.Windows.Forms.Label();
             this.TT_ButtonToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // B_MaxSpawnCountRange
@@ -84,9 +85,22 @@
             this.L_ConfigName.Text = "{Configured File Path}";
             this.L_ConfigName.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(807, 0);
+            this.button1.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(206, 44);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "Set Max Spawns";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // PlacementSpawnerEditor8a
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.L_ConfigName);
             this.Controls.Add(this.B_MaxSpawnCountRange);
             this.Controls.Add(this.PG_Spawner);
@@ -108,5 +122,6 @@
         private System.Windows.Forms.ComboBox CB_Encounters;
         private System.Windows.Forms.Label L_ConfigName;
         private System.Windows.Forms.ToolTip TT_ButtonToolTip;
+        private System.Windows.Forms.Button button1;
     }
 }
