@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using FlatSharp.Attributes;
@@ -26,7 +26,7 @@ public class PokedexResearchTable : IFlatBufferArchive<PokedexResearchTask>
 
     public PokedexResearchTask AddTask(int Species)
     {
-        var task = new PokedexResearchTask() { Species = Species };
+        var task = new PokedexResearchTask { Species = Species };
         Table = Table.Append(task);
         return task;
     }

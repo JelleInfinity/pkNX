@@ -1,134 +1,103 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml.Linq;
 using pkNX.Game;
 using pkNX.Structures;
 
-namespace pkNX.WinForms.Controls
+namespace pkNX.WinForms.Controls;
+
+public abstract class EditorBase
 {
-    public abstract class EditorBase
+    protected abstract GameManager ROM { get; }
+
+    public GameVersion Game => ROM.Game;
+    public int Language { get => ROM.Language; set => ROM.Language = value; }
+    public string? Location { get; private set; }
+
+    private const string prefix = "Edit";
+    private MethodInfo[] editorMethods = Array.Empty<MethodInfo>();
+    private EditorCallableAttribute[] editorAttributes = Array.Empty<EditorCallableAttribute>();
+
+    protected EditorBase()
     {
-        protected readonly GameManager ROM;
+        // Collect all methods that are marked as editors
+        // The method name needs to start with `Edit` or an EditorCallableAttribute should be added
+        var editors = GetType().GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Select(x => new { Method = x, Callable = x.GetCustomAttribute<EditorCallableAttribute>() })
+            .Where(x => x.Callable != null || x.Method.Name.StartsWith(prefix));
 
-        public GameVersion Game => ROM.Game;
-        public int Language { get => ROM.Language; set => ROM.Language = value; }
+        editorMethods = editors.Select(x => x.Method).ToArray();
+        editorAttributes = editors.Select(x => x.Callable ?? new EditorCallableAttribute(EditorCategory.None)).ToArray();
+    }
 
-        protected EditorBase(GameManager rom) => ROM = rom;
-        public string? Location { get; internal set; }
+    public void Initialize() => ROM.Initialize();
 
-        public void Initialize() => ROM.Initialize();
+    public int CountControlsForCategory(EditorCategory category) => editorAttributes.Count(a => a.Category == category);
 
-        private static string GetEditorName(string name)
+    public IEnumerable<Button> GetControls(Button templateButton, EditorCategory category = EditorCategory.None)
+    {
+        for (int i = 0; i < editorMethods.Length; ++i)
         {
-            var newName = name.Replace('_', ' ').ToCharArray();
-            var builder = new StringBuilder();
+            var m = editorMethods[i];
+            var callable = editorAttributes[i];
 
-            // Force first char to upper
-            newName[0] = char.ToUpper(newName[0]);
+            // Ignore all editors that are not of the requested category
+            if (callable.Category != category)
+                continue;
 
-            for (int i = 0; i < newName.Length; ++i)
+            var name = m.Name.Replace(prefix, ""); // Might or might not contain prefix
+            var b = new Button
             {
-                char c = newName[i];
-                builder.Append(c);
-
-                // Check the next char
-                if (i + 1 >= newName.Length)
-                    continue;
-                char nextC = newName[i + 1];
-
-                // If current is space, replace next with upper char
-                if (c == ' ')
-                {
-                    newName[i + 1] = char.ToUpper(nextC);
-                }
-                // If current is lower and next is upper, add a space in between
-                else if (char.IsLower(c) && char.IsUpper(nextC))
-                {
-                    builder.Append(' ');
-                }
-                // If previous is upper, current is upper and next is lower, add a space in between
-                else if (i + 2 < newName.Length && char.IsUpper(c) && char.IsUpper(nextC) && char.IsLower(newName[i + 2]))
-                {
-                    builder.Append(' ');
-                }
-            }
-            return builder.ToString();
-        }
-
-        public IEnumerable<Button> GetControls(int width, int height, EditorCategory category = EditorCategory.None)
-        {
-            var type = GetType();
-            var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var m in methods)
+                Width = templateButton.Width,
+                Height = templateButton.Height,
+                Margin = templateButton.Margin,
+                Font = templateButton.Font,
+                Name = $"B_{name}",
+                Text = (callable?.HasCustomEditorName() ?? false) ? callable.EditorName : WinFormsUtil.GetSpacedCapitalized(name),
+            };
+            b.Click += (s, e) =>
             {
-                const string prefix = "Edit";
-                var callable = m.GetCustomAttribute<EditorCallableAttribute>();
-
-                // The method name needs to start with `Edit` or an EditorCallable attribute should be added
-                if (!m.Name.StartsWith(prefix) && callable == null)
-                    continue;
-
-                // If an attribute was added, we need to only add buttons for the requested category
-                if (callable != null && callable.Category != category)
-                    continue;
-
-                // No attribute was added, ignore requests for any category buttons
-                if (callable == null && category != EditorCategory.None)
-                    continue;
-
-                var name = m.Name.Replace(prefix, "");
-                var b = new Button
+                try
                 {
-                    Width = width,
-                    Height = height,
-                    Name = $"B_{name}",
-                    Text = (callable?.HasCustomEditorName() ?? false) ? callable.EditorName : GetEditorName(name),
-                };
-                b.Click += (s, e) =>
+                    m.Invoke(this, null);
+                }
+                catch (Exception exception)
                 {
-                    try
-                    {
-                        m.Invoke(this, null);
-                    }
-                    catch (Exception exception)
-                    {
-                        if (exception.InnerException is { } x)
-                            exception = x;
-                        Console.WriteLine(exception);
-                        WinFormsUtil.Error(exception.Message, exception.StackTrace);
-                    }
-                };
-                yield return b;
-            }
+                    if (exception.InnerException is { } x)
+                        exception = x;
+                    Console.WriteLine(exception);
+                    WinFormsUtil.Error(exception.Message, exception.StackTrace ?? string.Empty);
+                }
+            };
+            yield return b;
         }
+    }
 
-        public void Close() => ROM.SaveAll(true);
-        public void Save() => ROM.SaveAll(false);
+    public void Close() => ROM.SaveAll(true);
+    public void Save() => ROM.SaveAll(false);
 
-        private static EditorBase? GetEditor(GameManager ROM) => ROM switch
-        {
-            GameManagerGG gg => new EditorGG(gg),
-            GameManagerSWSH swsh => new EditorSWSH(swsh),
-            GameManagerPLA pla => new EditorPLA(pla),
-            _ => null,
-        };
+    private static EditorBase? GetEditor(GameManager ROM) => ROM switch
+    {
+        GameManagerGG gg => new EditorGG(gg),
+        GameManagerSWSH swsh => new EditorSWSH(swsh),
+        GameManagerPLA pla => new EditorPLA(pla),
+        _ => null,
+    };
 
-        public static EditorBase? GetEditor(string loc, int language)
-        {
-            var gl = GameLocation.GetGame(loc);
-            if (gl == null)
-                return null;
+    public static EditorBase? GetEditor(string loc, int language, GameVersion gameOverride)
+    {
+        var gl = GameLocation.GetGame(loc, gameOverride);
+        if (gl == null)
+            return null;
 
-            var gm = GameManager.GetManager(gl, language);
-            var editor = GetEditor(gm);
-            if (editor == null)
-                return null;
+        var gm = GameManager.GetManager(gl, language);
+        var editor = GetEditor(gm);
+        if (editor == null)
+            return null;
 
-            editor.Location = loc;
-            return editor;
-        }
+        editor.Location = loc;
+        return editor;
     }
 }

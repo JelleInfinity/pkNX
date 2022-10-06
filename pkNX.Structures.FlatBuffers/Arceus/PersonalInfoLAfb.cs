@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 using FlatSharp.Attributes;
-using System.Linq;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable ClassNeverInstantiated.Global
@@ -14,7 +12,7 @@ using System.Linq;
 namespace pkNX.Structures.FlatBuffers;
 
 /// <summary>
-/// <see cref="PersonalInfo"/> class with values from the <see cref="GameVersion.PLA"/> games.
+/// Personal Info class with values from the <see cref="GameVersion.PLA"/> games.
 /// </summary>
 [FlatBufferTable, TypeConverter(typeof(ExpandableObjectConverter))]
 public class PersonalTableLAfb : IFlatBufferArchive<PersonalInfoLAfb>
@@ -23,12 +21,12 @@ public class PersonalTableLAfb : IFlatBufferArchive<PersonalInfoLAfb>
 }
 
 /// <summary>
-/// <see cref="PersonalInfo"/> class with values from the <see cref="GameVersion.PLA"/> games.
+/// Personal Info class with values from the <see cref="GameVersion.PLA"/> games.
 /// </summary>
 [FlatBufferTable, TypeConverter(typeof(ExpandableObjectConverter))]
 public class PersonalInfoLAfb
 {
-    [FlatBufferItem(00)] public ushort Species { get; set; } // ushort
+    [FlatBufferItem(00)] public ushort DexIndexNational { get; set; } // ushort
     [FlatBufferItem(01)] public ushort Form { get; set; } // ushort
     [FlatBufferItem(02)] public bool IsPresentInGame { get; set; } // byte
     [FlatBufferItem(03)] public byte Type1 { get; set; } // byte
@@ -78,7 +76,7 @@ public class PersonalInfoLAfb
     [FlatBufferItem(47)] public byte Field_47 { get; set; } // byte
     [FlatBufferItem(48)] public byte BaseFriendship { get; set; } // byte
     [FlatBufferItem(49)] public ushort DexIndexHisui { get; set; } // ushort
-    [FlatBufferItem(50)] public ushort DexIndexOther { get; set; } // ushort
+    [FlatBufferItem(50)] public ushort ModelID { get; set; } // ushort
     [FlatBufferItem(51)] public ushort DexIndexLocal1 { get; set; } // uint
     [FlatBufferItem(52)] public ushort DexIndexLocal2 { get; set; } // uint
     [FlatBufferItem(53)] public ushort DexIndexLocal3 { get; set; } // uint

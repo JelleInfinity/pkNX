@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
@@ -37,7 +37,7 @@ public class PlacementLocation8a
         TakeOffShoesOcclusion = 0x09FBFD6B423FAEA6, // "TakeOffShoesOcclusion"
         TreeCullingFrustumFar = 0xD55673931A300690, // "TreeCullingFrustumFar"
         WeatherOcclusion = 0x2B3435F7DF6CF454, // "WeatherOcclusion"
-    };
+    }
 
     [FlatBufferItem(0)] public string Field_00 { get; set; } = string.Empty;
     [FlatBufferItem(1)] public ulong Field_01 { get; set; }
@@ -198,7 +198,7 @@ public class PlacementLocation8a
         {
             if (!Enum.IsDefined(typeof(LocationType8a), LocationTypeID))
                 throw new ArgumentOutOfRangeException(nameof(LocationTypeID), LocationTypeID, $"Unknown 0x{LocationTypeID:X16}.");
-            return Enum.GetName(typeof(LocationType8a), LocationTypeID);
+            return ((LocationType8a)LocationTypeID).ToString();
         }
     }
 
@@ -206,19 +206,15 @@ public class PlacementLocation8a
     private static IReadOnlyDictionary<ulong, string>? _locationArgMap;
     private static IReadOnlyDictionary<ulong, string> GetLocationArgMap() => _locationArgMap ??= GenerateLocationArgMap();
 
-    private static IReadOnlyDictionary<ulong, string> GenerateLocationArgMap()
+    private static IReadOnlyDictionary<ulong, string> GenerateLocationArgMap() => new Dictionary<ulong, string>
     {
-        var result = new Dictionary<ulong, string>();
-        result[0xCBF29CE484222645] = "";
-
+        [0xCBF29CE484222645] = "",
         // PlaceName
-        result[FnvHash.HashFnv1a_64("NoneReport")] = "NoneReport";
-
+        [FnvHash.HashFnv1a_64("NoneReport")] = "NoneReport",
         // Bgm
-        result[FnvHash.HashFnv1a_64("LOW")] = "LOW";
-        result[FnvHash.HashFnv1a_64("HIGH")] = "HIGH";
-        return result;
-    }
+        [FnvHash.HashFnv1a_64("LOW")] = "LOW",
+        [FnvHash.HashFnv1a_64("HIGH")] = "HIGH",
+    };
 
     public string LocationArg2Summary => GetLocationArgMap().TryGetValue(LocationTypeArg2, out var arg) ? $"\"{arg}\"" : $"0x{LocationTypeArg2:X16}";
 

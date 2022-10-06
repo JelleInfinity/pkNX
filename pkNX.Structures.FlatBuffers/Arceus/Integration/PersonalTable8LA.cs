@@ -1,8 +1,9 @@
+using System.Collections;
 using pkNX.Containers;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Collections.Immutable;
 
 namespace pkNX.Structures.FlatBuffers;
 
@@ -16,7 +17,7 @@ public sealed class PersonalTable8LA : IPersonalTable, IPersonalTable<PersonalIn
     public int MaxSpeciesID => MaxSpecies;
 
     private readonly IFileContainer File;
-    public PersonalTableLAfb Root { get; private set; }
+    public PersonalTableLAfb Root { get; }
 
     public PersonalTable8LA(IFileContainer file)
     {
@@ -26,25 +27,30 @@ public sealed class PersonalTable8LA : IPersonalTable, IPersonalTable<PersonalIn
         var baseForms = new PersonalInfo8LA[MaxSpecies + 1];
         var formTable = new List<PersonalInfo8LA>();
 
+        var formGrouped = Root.Table
+            .OrderBy(z => z.DexIndexNational)
+            .ThenBy(z => z.Form)
+            .GroupBy(x => x.DexIndexNational)
+            .Select(group => group.ToImmutableArray());
+
         for (int i = 0; i <= MaxSpecies; i++)
         {
-            var forms = Root.Table.Where(z => z.Species == (ushort)i).OrderBy(z => z.Form).ToList();
+            var forms = formGrouped.ElementAt(i);
 
-            var e = forms[0];
-            baseForms[i] = GetObj(e, forms, MaxSpecies, formTable);
-            for (int f = 1; f < forms.Count; f++)
+            baseForms[i] = GetObj(forms[0], forms, MaxSpecies, formTable);
+            for (int f = 1; f < forms.Length; f++)
                 formTable.Add(GetObj(forms[f], forms, MaxSpecies, formTable, f));
         }
 
         Table = baseForms.Concat(formTable).ToArray();
     }
 
-    private PersonalInfo8LA GetObj(PersonalInfoLAfb e, List<PersonalInfoLAfb> forms, ushort max, List<PersonalInfo8LA> formTable, int f = 0)
+    private static PersonalInfo8LA GetObj(PersonalInfoLAfb e, ICollection forms, ushort max, ICollection formTable, int f = 0)
     {
         return new PersonalInfo8LA(e)
         {
             FormCount = (byte)forms.Count,
-            FormStatsIndex = (f != 0 ? 0 : forms.Count == 1 ? 0 : max + formTable.Count + 1)
+            FormStatsIndex = (f != 0 ? 0 : forms.Count == 1 ? 0 : max + formTable.Count + 1),
         };
     }
 
@@ -117,45 +123,43 @@ public sealed class PersonalTable8LA : IPersonalTable, IPersonalTable<PersonalIn
             Debug.Assert(l.DexIndexNational == s.DexIndexNational);
 
             if (l.HP == 0)
-            {
                 l.SetPersonalInfo(s);
-            }
 
             if (l.FormCount == 1)
                 continue;
 
+            var expectFormIndex = MaxSpeciesID + 1 + laFormCount;
             if (l.FormStatsIndex != 0)
-                Debug.Assert(l.FormStatsIndex == (MaxSpeciesID + 1) + laFormCount);
+                Debug.Assert(l.FormStatsIndex == expectFormIndex);
 
-            l.FormStatsIndex = (MaxSpeciesID + 1) + laFormCount;
+            l.FormStatsIndex = expectFormIndex;
             laFormCount += l.FormCount - 1;
 
             for (byte f = 1; f < l.FormCount; f++)
             {
                 var formL = Table[l.FormStatsIndex + (f - 1)];
+                if (formL.HP != 0)
+                    continue;
 
-                if (formL.HP == 0)
+                // Check if SWSH table has form data for this entry
+                if (f < s.FormCount)
                 {
-                    // Check if SWSH table has form data for this entry
-                    if (f < s.FormCount)
+                    if (s.FormCount <= l.FormCount || (FormInfo.HasBattleOnlyForm(i) && !FormInfo.IsBattleOnlyForm(i, f, 8)))
                     {
-                        if (s.FormCount <= l.FormCount || (FormInfo.HasBattleOnlyForm(i) && !FormInfo.IsBattleOnlyForm(i, f, 8)))
-                        {
-                            var formS = ResourcesUtil.SWSH.GetFormEntry(i, f);
+                        var formS = ResourcesUtil.SWSH.GetFormEntry(i, f);
 
-                            Debug.Assert(formL.DexIndexNational == formS.DexIndexNational);
-                            formL.SetPersonalInfo(formS);
-                        }
+                        Debug.Assert(formL.DexIndexNational == formS.DexIndexNational);
+                        formL.SetPersonalInfo(formS);
                     }
-                    else
-                    {
-                        // No form data was found, just write the base form data
-                        formL.SetPersonalInfo(l);
-                    }
+                }
+                else
+                {
+                    // No form data was found, just write the base form data
+                    formL.SetPersonalInfo(l);
                 }
             }
         }
 
-        Debug.WriteLine("Auto fix for PLA data succeded");
+        Debug.WriteLine("Auto fix for PLA data succeeded");
     }
 }
