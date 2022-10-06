@@ -531,13 +531,13 @@ internal class EditorPLA : EditorBase
     [EditorCallable(EditorCategory.Items)]
     public void EditThrowParam()
     {
-        PopFlat<ThrowParamTable8a, ThrowParam8a>(GameFile.ThrowParam, "Throw Param Editor", z => z.Hash.ToString("X16"));
+        PopFlat<ThrowParamTable8a, ThrowParam8a>(GameFile.ThrowParam, "Throw Param Editor", z => z.ThrowParamType.ToString());
     }
 
     [EditorCallable(EditorCategory.Items)]
     public void EditThrowPermissionSetParam()
     {
-        PopFlat<ThrowPermissionSetDictionary8a, ThrowPermissionSetEntry8a>(GameFile.ThrowPermissionSet, "Throw Permission Editor", z => z.Hash_00.ToString("X16"));
+        PopFlat<ThrowPermissionSetDictionary8a, ThrowPermissionSetEntry8a>(GameFile.ThrowPermissionSet, "Throw Permission Editor", z => z.ThrowPermissionSet.ToString());
     }
 
     [EditorCallable(EditorCategory.Items)]
@@ -554,7 +554,7 @@ internal class EditorPLA : EditorBase
     [EditorCallable(EditorCategory.Items)]
     public void EditThrowResourceSetDictionary()
     {
-        PopFlat<ThrowableResourceSetDictionary8a, ThrowableResourceSetEntry8a>(GameFile.ThrowableResourceSet, "Throwable Resource Set Dictionary Editor", z => z.Hash_00.ToString("X16"));
+        PopFlat<ThrowableResourceSetDictionary8a, ThrowableResourceSetEntry8a>(GameFile.ThrowableResourceSet, "Throwable Resource Set Dictionary Editor", z => z.ItemType.ToString());
     }
 
     [EditorCallable(EditorCategory.Items)]
@@ -597,6 +597,8 @@ internal class EditorPLA : EditorBase
     [EditorCallable(EditorCategory.Player)] public void EditPlayerConfig() => PopFlatConfig(GameFile.PlayerConfig, "Player Config Editor");
     [EditorCallable(EditorCategory.Player)] public void EditPlayerControllerConfig() => PopFlatConfig(GameFile.PlayerControllerConfig, "Player Controller Config");
     [EditorCallable(EditorCategory.Player)] public void EditPlayerFaceConfig() => PopFlatConfig(GameFile.PlayerFaceConfig, "Player Face Config");
+    [EditorCallable(EditorCategory.Player)] public void EditPlayer1DressupTable() => PopFlat<DressUpTable8a, DressUpEntry8a>(GameFile.Player1DressupTable, "Player 1 DressUp Table", z => z.EntryName);
+    [EditorCallable(EditorCategory.Player)] public void EditPlayer2DressupTable() => PopFlat<DressUpTable8a, DressUpEntry8a>(GameFile.Player2DressupTable, "Player 2 DressUp Table", z => z.EntryName);
 
     #endregion
 
