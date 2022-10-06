@@ -234,6 +234,7 @@ public class GameFileMapping
         new(GameFile.MoveShop, ContainerType.SingleFile, "bin", "appli", "wazaremember", "bin", "wazashop_table.bin"),
         new(GameFile.HaShop, ContainerType.SingleFile, "bin", "appli", "shop", "bin", "ha_shop_data.bin"),
 
+        new(GameFile.ThrowParam             , ContainerType.SingleFile, "bin", "capture", "throw_param_table.bin"),
         new(GameFile.ThrowPermissionSet     , ContainerType.SingleFile, "bin", "capture", "throw_permissionset_dictionary.bin"),
         new(GameFile.ThrowableParam         , ContainerType.SingleFile, "bin", "capture", "throwable_param_table.bin"),
         new(GameFile.ThrowableResource      , ContainerType.SingleFile, "bin", "capture", "throwable_resource_dictionary.bin"),
