@@ -323,6 +323,8 @@ public class GameFileMapping
         new(GameFile.PlayerCollisionConfig         , ContainerType.SingleFile, "bin", "misc", "app_config", "player_collision_config.bin"),
         new(GameFile.PlayerConfig                  , ContainerType.SingleFile, "bin", "misc", "app_config", "player_config.bin"),
         new(GameFile.PlayerControllerConfig        , ContainerType.SingleFile, "bin", "misc", "app_config", "player_controller_config.bin"),
+        new(GameFile.Player1DressupTable        , ContainerType.SingleFile, "bin", "chara", "table", "dressup_table_p1.bin"),
+        new(GameFile.Player2DressupTable        , ContainerType.SingleFile, "bin", "chara", "table", "dressup_table_p2.bin"),
         new(GameFile.PlayerFaceConfig              , ContainerType.SingleFile, "bin", "misc", "app_config", "player_face_config.bin"),
         new(GameFile.PokemonConfig                 , ContainerType.SingleFile, "bin", "misc", "app_config", "pokemon_config.bin"),
         new(GameFile.PokemonControllerConfig       , ContainerType.SingleFile, "bin", "misc", "app_config", "pokemon_controller_config.bin"),
